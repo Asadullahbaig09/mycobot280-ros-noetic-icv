@@ -1,0 +1,9 @@
+.git
+.github
+demo_img
+**/*.STEP
+**/__pycache__
+**/*.pyc
+.vscode
+.idea
+*.log

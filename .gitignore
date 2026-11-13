@@ -19,3 +19,13 @@ gitlib.sh
 *.sw?
 
 urdf.zip
+
+# Python caches
+__pycache__/
+
+# catkin build output (if the workspace is built inside this folder)
+/build/
+/devel/
+/install/
+/logs/
+*.log
