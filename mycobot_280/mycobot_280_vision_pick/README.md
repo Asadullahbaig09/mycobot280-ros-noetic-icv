@@ -69,6 +69,14 @@ move above its pad → straight down → detach → open → lift. Free-space mo
 planned with OMPL; approach and retreat use Cartesian straight-line paths. Before
 reading the camera the arm swings behind its base so it does not block the view.
 
+The floor and a box covering the whole hand are added to MoveIt's planning scene, so
+planned motions keep the gripper above the ground (the upstream model only has tiny
+collision cylinders on the gripper).
+
+The grasp point was measured in Gazebo: the finger pads hang 88-115 mm below the
+flange, 8 mm off its axis, and close to a gap of about 29 mm. That is why the cubes
+are 30 mm wide: this gripper cannot pinch anything narrower.
+
 ### 3. Grasping (`src/gripper_attach_plugin.cpp`)
 
 The gripper's collision shapes in the upstream model are tiny cylinders, so a pure
@@ -94,8 +102,8 @@ Parameters of `pick_place.py` (private ROS params):
 
 | Parameter | Default | Meaning |
 |---|---|---|
-| `tcp_offset` | `[0, 0.016, 0.058]` | Grasp point in the `joint6_flange` frame (m) |
-| `gripper_open` / `gripper_closed` | `0.1` / `-0.25` | `gripper_controller` joint values (rad) |
+| `tcp_offset` | `[0, 0.008, 0.102]` | Grasp point (centre of the closed finger pads) in the `joint6_flange` frame (m) |
+| `gripper_open` / `gripper_closed` | `0.1` / `-0.45` | `gripper_controller` joint values (rad) |
 | `approach_height` | `0.06` | Height above the cube for approach/retreat (m) |
 | `pads` | red `[0, 0.2]`, green `[0, -0.2]`, blue `[0.1, -0.2]` | Drop-off positions (m) |
 | `observe_joints` | `[-1.57, 0, 0, 0, 0, 0]` | Arm pose used while the camera looks at the table |

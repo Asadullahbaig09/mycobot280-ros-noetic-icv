@@ -34,7 +34,7 @@ RGBA = {"red": (1, 0, 0), "green": (0, 1, 0), "blue": (0, 0, 1)}
 
 class CubeDetector:
     def __init__(self):
-        self.cube_size = rospy.get_param("~cube_size", 0.025)
+        self.cube_size = rospy.get_param("~cube_size", 0.03)
         self.min_area = rospy.get_param("~min_area_px", 60)
         self.world_frame = rospy.get_param("~world_frame", "world")
         self.bridge = CvBridge()

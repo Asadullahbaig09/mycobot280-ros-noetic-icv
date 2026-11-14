@@ -27,28 +27,40 @@ class PickPlace:
         self.arm.set_planning_time(5.0)
         self.arm.set_num_planning_attempts(5)
 
-        # Grasp point (between the finger pads) in the joint6_flange frame. Calibration knob.
-        # y = +16 mm: the finger pads are offset from the flange axis, and at y = 0 the inner
-        # linkage pivots (gripper_left2/right2, z = 61 mm) collide with the cube and shove it away.
-        self.tcp = np.array(rospy.get_param("~tcp_offset", [0.0, 0.016, 0.058]))
-        self.cube_size = rospy.get_param("~cube_size", 0.025)
+        # Grasp point = centre of the two finger pads when closed, in the joint6_flange frame.
+        # Measured in Gazebo: the pads hang 88-115 mm below the flange and sit 8 mm off its axis.
+        # Calibration knob: re-measure for a different gripper.
+        self.tcp = np.array(rospy.get_param("~tcp_offset", [0.0, 0.008, 0.102]))
+        self.cube_size = rospy.get_param("~cube_size", 0.03)
         self.approach = rospy.get_param("~approach_height", 0.06)
         self.grip_open = rospy.get_param("~gripper_open", 0.1)
-        self.grip_closed = rospy.get_param("~gripper_closed", -0.25)
+        self.grip_closed = rospy.get_param("~gripper_closed", -0.45)  # pad gap ~30 mm
         self.observe_joints = rospy.get_param("~observe_joints", [-1.57, 0.0, 0.0, 0.0, 0.0, 0.0])
         self.pads = rospy.get_param("~pads", {"red": [0.0, 0.20], "green": [0.0, -0.20], "blue": [0.10, -0.20]})
 
         self.attach_pub = rospy.Publisher("vision_pick/attach", String, queue_size=1)
-        self.add_ground()
+        self.add_collision_objects()
 
-    def add_ground(self):
-        """Tell MoveIt where the floor is, otherwise the planner happily routes the arm through it."""
+    def add_collision_objects(self):
+        """Tell MoveIt about the floor and the real size of the hand.
+
+        Without the floor the planner routes the arm through it. The upstream model gives
+        the gripper only tiny collision cylinders, so a box covering the whole hand
+        (down to the finger pads) is attached to the flange as well.
+        """
         scene = moveit_commander.PlanningSceneInterface(synchronous=True)
         ground = PoseStamped()
         ground.header.frame_id = self.arm.get_planning_frame()
         ground.pose.orientation.w = 1.0
         ground.pose.position.z = -0.011  # 2 cm slab, top 1 mm below z = 0 so the robot base is not "in collision"
         scene.add_box("ground", ground, size=(2.0, 2.0, 0.02))
+
+        hand = PoseStamped()
+        hand.header.frame_id = "joint6_flange"
+        hand.pose.orientation.w = 1.0
+        hand.pose.position.z = 0.0675  # box spans 20-115 mm below the flange
+        touch = moveit_commander.RobotCommander().get_link_names(group="gripper") + ["joint6_flange", "joint6"]
+        scene.attach_box("joint6_flange", "hand", hand, size=(0.10, 0.04, 0.095), touch_links=touch)
 
     # ---------- motion helpers ----------
     def flange_pose(self, x, y, z, yaw):

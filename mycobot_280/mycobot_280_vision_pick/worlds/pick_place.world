@@ -35,34 +35,34 @@
         <material><ambient>0.8 0.8 1 1</ambient><diffuse>0.8 0.8 1 1</diffuse></material></visual></link>
     </model>
 
-    <!-- 2.5 cm cubes, placed with arbitrary yaw: the detector has to recover position AND yaw -->
+    <!-- 3 cm cubes (the gripper's pads close to ~29 mm, so smaller cubes cannot be pinched), placed with arbitrary yaw: the detector has to recover position AND yaw -->
     <model name="cube_red">
-      <pose>0.17 0.07 0.0125 0 0 0.35</pose>
+      <pose>0.17 0.07 0.015 0 0 0.35</pose>
       <link name="link">
-        <inertial><mass>0.02</mass><inertia><ixx>2e-6</ixx><iyy>2e-6</iyy><izz>2e-6</izz></inertia></inertial>
-        <collision name="c"><geometry><box><size>0.025 0.025 0.025</size></box></geometry>
+        <inertial><mass>0.02</mass><inertia><ixx>3e-6</ixx><iyy>3e-6</iyy><izz>3e-6</izz></inertia></inertial>
+        <collision name="c"><geometry><box><size>0.03 0.03 0.03</size></box></geometry>
           <surface><friction><ode><mu>1.0</mu><mu2>1.0</mu2></ode></friction></surface></collision>
-        <visual name="v"><geometry><box><size>0.025 0.025 0.025</size></box></geometry>
+        <visual name="v"><geometry><box><size>0.03 0.03 0.03</size></box></geometry>
           <material><ambient>0.8 0 0 1</ambient><diffuse>0.8 0 0 1</diffuse></material></visual>
       </link>
     </model>
     <model name="cube_green">
-      <pose>0.20 -0.03 0.0125 0 0 -0.5</pose>
+      <pose>0.20 -0.03 0.015 0 0 -0.5</pose>
       <link name="link">
-        <inertial><mass>0.02</mass><inertia><ixx>2e-6</ixx><iyy>2e-6</iyy><izz>2e-6</izz></inertia></inertial>
-        <collision name="c"><geometry><box><size>0.025 0.025 0.025</size></box></geometry>
+        <inertial><mass>0.02</mass><inertia><ixx>3e-6</ixx><iyy>3e-6</iyy><izz>3e-6</izz></inertia></inertial>
+        <collision name="c"><geometry><box><size>0.03 0.03 0.03</size></box></geometry>
           <surface><friction><ode><mu>1.0</mu><mu2>1.0</mu2></ode></friction></surface></collision>
-        <visual name="v"><geometry><box><size>0.025 0.025 0.025</size></box></geometry>
+        <visual name="v"><geometry><box><size>0.03 0.03 0.03</size></box></geometry>
           <material><ambient>0 0.7 0 1</ambient><diffuse>0 0.7 0 1</diffuse></material></visual>
       </link>
     </model>
     <model name="cube_blue">
-      <pose>0.15 -0.09 0.0125 0 0 0.1</pose>
+      <pose>0.15 -0.09 0.015 0 0 0.1</pose>
       <link name="link">
-        <inertial><mass>0.02</mass><inertia><ixx>2e-6</ixx><iyy>2e-6</iyy><izz>2e-6</izz></inertia></inertial>
-        <collision name="c"><geometry><box><size>0.025 0.025 0.025</size></box></geometry>
+        <inertial><mass>0.02</mass><inertia><ixx>3e-6</ixx><iyy>3e-6</iyy><izz>3e-6</izz></inertia></inertial>
+        <collision name="c"><geometry><box><size>0.03 0.03 0.03</size></box></geometry>
           <surface><friction><ode><mu>1.0</mu><mu2>1.0</mu2></ode></friction></surface></collision>
-        <visual name="v"><geometry><box><size>0.025 0.025 0.025</size></box></geometry>
+        <visual name="v"><geometry><box><size>0.03 0.03 0.03</size></box></geometry>
           <material><ambient>0 0 0.8 1</ambient><diffuse>0 0 0.8 1</diffuse></material></visual>
       </link>
     </model>
