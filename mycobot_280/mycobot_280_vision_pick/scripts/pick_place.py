@@ -33,6 +33,7 @@ class PickPlace:
         self.tcp = np.array(rospy.get_param("~tcp_offset", [0.0, 0.008, 0.102]))
         self.cube_size = rospy.get_param("~cube_size", 0.03)
         self.approach = rospy.get_param("~approach_height", 0.06)
+        self.place_clearance = rospy.get_param("~place_clearance", 0.0005)  # gap under the cube when released (m)
         self.grip_open = rospy.get_param("~gripper_open", 0.1)
         self.grip_closed = rospy.get_param("~gripper_closed", -0.45)  # pad gap ~30 mm
         self.observe_joints = rospy.get_param("~observe_joints", [-1.57, 0.0, 0.0, 0.0, 0.0, 0.0])
@@ -132,11 +133,13 @@ class PickPlace:
 
     def place(self, name):
         px, py = self.pads[name]
-        z = self.cube_size / 2 + 0.003
+        # Set the cube down on the ground before letting go. The weld, not the finger pads,
+        # is what holds it, so a cube released any higher visibly drops while the gripper is
+        # still closed.
+        z = self.cube_size / 2 + self.place_clearance
         self.move_to(self.flange_pose(px, py, z + self.approach, 0.0))
         self.straight_to(self.flange_pose(px, py, z, 0.0))
-        self.attach_pub.publish(String(""))
-        rospy.sleep(0.5)
+        self.attach_pub.publish(String(""))  # release the weld as the fingers start to open
         self.set_gripper(self.grip_open)
         self.straight_to(self.flange_pose(px, py, z + self.approach, 0.0))
 

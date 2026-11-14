@@ -105,6 +105,7 @@ Parameters of `pick_place.py` (private ROS params):
 | `tcp_offset` | `[0, 0.008, 0.102]` | Grasp point (centre of the closed finger pads) in the `joint6_flange` frame (m) |
 | `gripper_open` / `gripper_closed` | `0.1` / `-0.45` | `gripper_controller` joint values (rad) |
 | `approach_height` | `0.06` | Height above the cube for approach/retreat (m) |
+| `place_clearance` | `0.0005` | Gap left under the cube when it is released (m). The cube is set down before the weld is released, so it does not drop |
 | `pads` | red `[0, 0.2]`, green `[0, -0.2]`, blue `[0.1, -0.2]` | Drop-off positions (m) |
 | `observe_joints` | `[-1.57, 0, 0, 0, 0, 0]` | Arm pose used while the camera looks at the table |
 
