@@ -12,7 +12,7 @@ import moveit_commander
 import numpy as np
 import rospy
 import tf.transformations as tft
-from geometry_msgs.msg import Pose
+from geometry_msgs.msg import Pose, PoseStamped
 from std_msgs.msg import String
 from visualization_msgs.msg import Marker, MarkerArray
 
@@ -39,6 +39,16 @@ class PickPlace:
         self.pads = rospy.get_param("~pads", {"red": [0.0, 0.20], "green": [0.0, -0.20], "blue": [0.10, -0.20]})
 
         self.attach_pub = rospy.Publisher("vision_pick/attach", String, queue_size=1)
+        self.add_ground()
+
+    def add_ground(self):
+        """Tell MoveIt where the floor is, otherwise the planner happily routes the arm through it."""
+        scene = moveit_commander.PlanningSceneInterface(synchronous=True)
+        ground = PoseStamped()
+        ground.header.frame_id = self.arm.get_planning_frame()
+        ground.pose.orientation.w = 1.0
+        ground.pose.position.z = -0.011  # 2 cm slab, top 1 mm below z = 0 so the robot base is not "in collision"
+        scene.add_box("ground", ground, size=(2.0, 2.0, 0.02))
 
     # ---------- motion helpers ----------
     def flange_pose(self, x, y, z, yaw):
