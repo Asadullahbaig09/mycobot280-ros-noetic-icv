@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+  <world name="vision_pick">
+    <include><uri>model://ground_plane</uri></include>
+    <include><uri>model://sun</uri></include>
+
+    <scene>
+      <shadows>false</shadows>
+      <ambient>0.6 0.6 0.6 1</ambient>
+    </scene>
+
+    <!-- Welds grasped cubes to the gripper (src/gripper_attach_plugin.cpp) -->
+    <plugin name="gripper_attach" filename="libgripper_attach_plugin.so">
+      <robot>robot</robot>
+      <link>joint6_flange</link>
+    </plugin>
+
+    <!-- Drop-off pads: pale colours so the detector (saturation threshold) ignores them -->
+    <model name="pad_red">
+      <static>true</static>
+      <pose>0.0 0.20 0.0005 0 0 0</pose>
+      <link name="link"><visual name="v"><geometry><box><size>0.07 0.07 0.001</size></box></geometry>
+        <material><ambient>1 0.8 0.8 1</ambient><diffuse>1 0.8 0.8 1</diffuse></material></visual></link>
+    </model>
+    <model name="pad_green">
+      <static>true</static>
+      <pose>0.0 -0.20 0.0005 0 0 0</pose>
+      <link name="link"><visual name="v"><geometry><box><size>0.07 0.07 0.001</size></box></geometry>
+        <material><ambient>0.8 1 0.8 1</ambient><diffuse>0.8 1 0.8 1</diffuse></material></visual></link>
+    </model>
+    <model name="pad_blue">
+      <static>true</static>
+      <pose>0.10 -0.20 0.0005 0 0 0</pose>
+      <link name="link"><visual name="v"><geometry><box><size>0.07 0.07 0.001</size></box></geometry>
+        <material><ambient>0.8 0.8 1 1</ambient><diffuse>0.8 0.8 1 1</diffuse></material></visual></link>
+    </model>
+
+    <!-- 2.5 cm cubes, placed with arbitrary yaw: the detector has to recover position AND yaw -->
+    <model name="cube_red">
+      <pose>0.17 0.07 0.0125 0 0 0.35</pose>
+      <link name="link">
+        <inertial><mass>0.02</mass><inertia><ixx>2e-6</ixx><iyy>2e-6</iyy><izz>2e-6</izz></inertia></inertial>
+        <collision name="c"><geometry><box><size>0.025 0.025 0.025</size></box></geometry>
+          <surface><friction><ode><mu>1.0</mu><mu2>1.0</mu2></ode></friction></surface></collision>
+        <visual name="v"><geometry><box><size>0.025 0.025 0.025</size></box></geometry>
+          <material><ambient>0.8 0 0 1</ambient><diffuse>0.8 0 0 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="cube_green">
+      <pose>0.20 -0.03 0.0125 0 0 -0.5</pose>
+      <link name="link">
+        <inertial><mass>0.02</mass><inertia><ixx>2e-6</ixx><iyy>2e-6</iyy><izz>2e-6</izz></inertia></inertial>
+        <collision name="c"><geometry><box><size>0.025 0.025 0.025</size></box></geometry>
+          <surface><friction><ode><mu>1.0</mu><mu2>1.0</mu2></ode></friction></surface></collision>
+        <visual name="v"><geometry><box><size>0.025 0.025 0.025</size></box></geometry>
+          <material><ambient>0 0.7 0 1</ambient><diffuse>0 0.7 0 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="cube_blue">
+      <pose>0.15 -0.09 0.0125 0 0 0.1</pose>
+      <link name="link">
+        <inertial><mass>0.02</mass><inertia><ixx>2e-6</ixx><iyy>2e-6</iyy><izz>2e-6</izz></inertia></inertial>
+        <collision name="c"><geometry><box><size>0.025 0.025 0.025</size></box></geometry>
+          <surface><friction><ode><mu>1.0</mu><mu2>1.0</mu2></ode></friction></surface></collision>
+        <visual name="v"><geometry><box><size>0.025 0.025 0.025</size></box></geometry>
+          <material><ambient>0 0 0.8 1</ambient><diffuse>0 0 0.8 1</diffuse></material></visual>
+      </link>
+    </model>
+  </world>
+</sdf>

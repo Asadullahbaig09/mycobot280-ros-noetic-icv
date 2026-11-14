@@ -8,6 +8,15 @@
 
 [中文文档](https://docs.elephantrobotics.com/docs/gitbook/12-ApplicationBaseROS/) | [English Documentation](https://docs.elephantrobotics.com/docs/gitbook-en/12-ApplicationBaseROS/)
 
+> **About this fork.** This repository is a fork of Elephant Robotics'
+> [mycobot_ros](https://github.com/elephantrobotics/mycobot_ros), used for a computer-vision course project.
+> The work added here is:
+> - [`mycobot_280/mycobot_280_vision_pick`](mycobot_280/mycobot_280_vision_pick/README.md): vision-based
+>   pick-and-place for the myCobot 280 in Gazebo (OpenCV cube detection from an overhead camera, MoveIt motion).
+> - A working ROS Noetic `Dockerfile` / `docker-compose.yml` and a `.dockerignore`.
+>
+> Everything else is the original upstream code.
+
 Control or simulate myCobot series robots in ROS.
 
 ![Demo](./demo_img/Screenshot-1.png)

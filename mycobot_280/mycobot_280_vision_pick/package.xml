@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>mycobot_280_vision_pick</name>
+  <version>0.1.0</version>
+  <description>Vision-based pick-and-place for the myCobot 280 M5 in Gazebo: an overhead camera detects coloured cubes with OpenCV and MoveIt sorts them onto pads.</description>
+  <maintainer email="noreply@example.com">Asad Ullah Baig</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roscpp</depend>
+  <depend>gazebo_ros</depend>
+  <depend>std_msgs</depend>
+
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>visualization_msgs</exec_depend>
+  <exec_depend>cv_bridge</exec_depend>
+  <exec_depend>tf</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>xacro</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>controller_manager</exec_depend>
+  <exec_depend>gazebo_ros_control</exec_depend>
+  <exec_depend>joint_trajectory_controller</exec_depend>
+  <exec_depend>position_controllers</exec_depend>
+  <exec_depend>gazebo_plugins</exec_depend>
+  <exec_depend>moveit_commander</exec_depend>
+  <exec_depend>rqt_image_view</exec_depend>
+  <exec_depend>mycobot_description</exec_depend>
+  <exec_depend>mycobot_280m5_gazebo_gripper</exec_depend>
+  <exec_depend>roboticsgroup_upatras_gazebo_plugins</exec_depend>
+</package>

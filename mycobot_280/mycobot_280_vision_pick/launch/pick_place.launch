@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!--
+  Vision-based pick-and-place for myCobot 280 M5 in Gazebo.
+    roslaunch mycobot_280_vision_pick pick_place.launch                  # everything
+    roslaunch mycobot_280_vision_pick pick_place.launch auto_start:=false # sim + vision only
+-->
+<launch>
+  <arg name="gui" default="true" doc="Gazebo client window"/>
+  <arg name="rviz" default="true" doc="MoveIt RViz window"/>
+  <arg name="image_view" default="true" doc="Window with the annotated camera image"/>
+  <arg name="auto_start" default="true" doc="Run the pick-and-place sequence once everything is up"/>
+
+  <param name="robot_description" command="$(find xacro)/xacro $(find mycobot_280_vision_pick)/urdf/mycobot_280_vision.urdf.xacro"/>
+
+  <!-- Gazebo world with the cubes, pads and the attach plugin. Starts paused so the initial pose is applied. -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find mycobot_280_vision_pick)/worlds/pick_place.world"/>
+    <arg name="gui" value="$(arg gui)"/>
+    <arg name="paused" value="true"/>
+  </include>
+  <node name="spawn_robot" pkg="gazebo_ros" type="spawn_model" output="screen"
+        args="-urdf -param robot_description -model robot -unpause -J gripper_controller 0.1"/>
+
+  <!-- ros_control controllers (PID gains and tolerances tuned for this task) -->
+  <rosparam file="$(find mycobot_280_vision_pick)/config/controllers.yaml" command="load"/>
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" output="screen"
+        args="joint_state_controller arm_controller gripper_controller"/>
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+
+  <!-- MoveIt, talking to the Gazebo trajectory controllers -->
+  <include file="$(find mycobot_280m5_gazebo_gripper)/launch/move_group.launch"/>
+  <!-- Simulation can run slower than real time under WSL: do not cancel slow trajectories too eagerly -->
+  <param name="move_group/trajectory_execution/allowed_execution_duration_scaling" value="4.0"/>
+  <param name="move_group/trajectory_execution/allowed_goal_duration_margin" value="3.0"/>
+  <include if="$(arg rviz)" file="$(find mycobot_280m5_gazebo_gripper)/launch/moveit_rviz.launch">
+    <arg name="rviz_config" value="$(find mycobot_280_vision_pick)/config/pick_place.rviz"/>
+  </include>
+
+  <!-- Vision -->
+  <node name="cube_detector" pkg="mycobot_280_vision_pick" type="cube_detector.py" output="screen"/>
+  <node if="$(arg image_view)" name="image_view" pkg="rqt_image_view" type="rqt_image_view" args="/vision_pick/debug_image"/>
+
+  <!-- Task -->
+  <node if="$(arg auto_start)" name="pick_place" pkg="mycobot_280_vision_pick" type="pick_place.py" output="screen"/>
+</launch>
