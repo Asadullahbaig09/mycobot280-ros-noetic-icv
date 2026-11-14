@@ -35,6 +35,27 @@ with the annotated camera image, then sorts the three cubes.
 To start the task by hand: launch with `auto_start:=false`, then
 `rosrun mycobot_280_vision_pick pick_place.py`.
 
+### Watch it again
+
+The sequence runs once per launch. To replay it without restarting, open a second
+terminal (with `source devel/setup.bash`) and run:
+
+```bash
+rosservice call /gazebo/reset_world                # puts the cubes back
+rosrun mycobot_280_vision_pick pick_place.py       # sorts them again
+```
+
+### Troubleshooting
+
+If the launch prints `SpawnModel: Failure - entity already exists` or
+`[gazebo-1] process has died`, and the cubes are already on their pads, an earlier
+simulation is still running in the background and the new launch attached to it.
+Stop everything and launch again:
+
+```bash
+killall -9 gzserver gzclient roslaunch rosmaster rviz move_group
+```
+
 ## How it works
 
 ```
