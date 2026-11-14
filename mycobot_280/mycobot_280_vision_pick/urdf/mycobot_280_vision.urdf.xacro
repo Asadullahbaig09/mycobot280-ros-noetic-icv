@@ -3,6 +3,34 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="firefighter">
   <xacro:include filename="$(find mycobot_280m5_gazebo_gripper)/config/mycobot_280m5_with_gripper_lll.urdf"/>
 
+  <!--
+    Collision boxes for the two finger pads. The upstream model only has tiny cylinders at
+    the finger pivots, so without these the pads pass straight through objects. Sizes and
+    offsets were measured from the rendered pad meshes. Only the Gazebo copy of the model
+    gets them (pad_collisions:=true): MoveIt covers the hand with one box instead.
+  -->
+  <xacro:arg name="pad_collisions" default="false"/>
+  <xacro:macro name="finger_pad" params="side x">
+    <link name="gripper_${side}_pad">
+      <collision>
+        <geometry><box size="0.01313 0.02597 0.02085"/></geometry>
+      </collision>
+      <inertial>
+        <mass value="0.0001"/>
+        <inertia ixx="1e-8" iyy="1e-8" izz="1e-8" ixy="0" ixz="0" iyz="0"/>
+      </inertial>
+    </link>
+    <joint name="gripper_${side}_pad_joint" type="fixed">
+      <parent link="gripper_${side}1"/>
+      <child link="gripper_${side}_pad"/>
+      <origin xyz="${x} 0.04041 -0.00822" rpy="0 0 0"/>
+    </joint>
+  </xacro:macro>
+  <xacro:if value="$(arg pad_collisions)">
+    <xacro:finger_pad side="left" x="0.012155"/>
+    <xacro:finger_pad side="right" x="-0.013465"/>
+  </xacro:if>
+
   <!-- Camera pose in the world (eye-to-hand). Looks straight down over the workspace. -->
   <xacro:property name="cam_x" value="0.08"/>
   <xacro:property name="cam_z" value="0.65"/>

@@ -11,6 +11,8 @@
   <arg name="auto_start" default="true" doc="Run the pick-and-place sequence once everything is up"/>
 
   <param name="robot_description" command="$(find xacro)/xacro $(find mycobot_280_vision_pick)/urdf/mycobot_280_vision.urdf.xacro"/>
+  <!-- Gazebo gets the same robot plus collision boxes on the finger pads -->
+  <param name="robot_description_gazebo" command="$(find xacro)/xacro $(find mycobot_280_vision_pick)/urdf/mycobot_280_vision.urdf.xacro pad_collisions:=true"/>
 
   <!-- Gazebo world with the cubes, pads and the attach plugin. Starts paused so the initial pose is applied. -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -19,7 +21,7 @@
     <arg name="paused" value="true"/>
   </include>
   <node name="spawn_robot" pkg="gazebo_ros" type="spawn_model" output="screen"
-        args="-urdf -param robot_description -model robot -unpause -J gripper_controller 0.1"/>
+        args="-urdf -param robot_description_gazebo -model robot -unpause -J gripper_controller 0.1"/>
 
   <!-- ros_control controllers (PID gains and tolerances tuned for this task) -->
   <rosparam file="$(find mycobot_280_vision_pick)/config/controllers.yaml" command="load"/>

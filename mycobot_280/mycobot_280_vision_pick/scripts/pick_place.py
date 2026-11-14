@@ -17,6 +17,18 @@ from std_msgs.msg import String
 from visualization_msgs.msg import Marker, MarkerArray
 
 
+# Distance between the inner faces of the two finger pads (mm) for gripper_controller
+# joint values (rad). Measured in Gazebo from background-subtracted silhouettes of the
+# gripper, 0.09 mm/pixel. Re-measure for a different gripper.
+GRIPPER_GAP = [(-0.50, 17.35), (-0.45, 19.97), (-0.40, 22.51), (-0.30, 27.38),
+               (-0.20, 31.79), (-0.10, 35.73), (0.00, 39.11), (0.10, 42.01)]
+
+
+def gripper_value_for_gap(gap):
+    """gripper_controller joint value that opens the pads to `gap` metres."""
+    return float(np.interp(gap * 1000.0, [g for _, g in GRIPPER_GAP], [q for q, _ in GRIPPER_GAP]))
+
+
 class PickPlace:
     def __init__(self):
         # move_group takes a while to come up when everything starts from one launch file
@@ -27,15 +39,16 @@ class PickPlace:
         self.arm.set_planning_time(5.0)
         self.arm.set_num_planning_attempts(5)
 
-        # Grasp point = centre of the two finger pads when closed, in the joint6_flange frame.
-        # Measured in Gazebo: the pads hang 88-115 mm below the flange and sit 8 mm off its axis.
-        # Calibration knob: re-measure for a different gripper.
-        self.tcp = np.array(rospy.get_param("~tcp_offset", [0.0, 0.008, 0.102]))
+        # Grasp point = centre of the two finger pads when closed on a cube, in the
+        # joint6_flange frame. Measured in Gazebo: the pads hang 88-114 mm below the flange
+        # and sit 7.7 mm off its axis. Calibration knob: re-measure for a different gripper.
+        self.tcp = np.array(rospy.get_param("~tcp_offset", [-0.0007, 0.0077, 0.101]))
         self.cube_size = rospy.get_param("~cube_size", 0.03)
         self.approach = rospy.get_param("~approach_height", 0.06)
         self.place_clearance = rospy.get_param("~place_clearance", 0.0005)  # gap under the cube when released (m)
         self.grip_open = rospy.get_param("~gripper_open", 0.1)
-        self.grip_closed = rospy.get_param("~gripper_closed", -0.45)  # pad gap ~30 mm
+        # Close until the pads are just at the cube's faces (0.3 mm free per side), not into them
+        self.grip_closed = gripper_value_for_gap(self.cube_size + rospy.get_param("~grasp_clearance", 0.0006))
         self.observe_joints = rospy.get_param("~observe_joints", [-1.57, 0.0, 0.0, 0.0, 0.0, 0.0])
         self.pads = rospy.get_param("~pads", {"red": [0.0, 0.20], "green": [0.0, -0.20], "blue": [0.10, -0.20]})
 

@@ -94,16 +94,22 @@ The floor and a box covering the whole hand are added to MoveIt's planning scene
 planned motions keep the gripper above the ground (the upstream model only has tiny
 collision cylinders on the gripper).
 
-The grasp point was measured in Gazebo: the finger pads hang 88-115 mm below the
-flange, 8 mm off its axis, and close to a gap of about 29 mm. That is why the cubes
-are 30 mm wide: this gripper cannot pinch anything narrower.
+The gripper geometry was measured in Gazebo from background-subtracted silhouettes
+(0.09 mm per pixel): the finger pads hang 88-114 mm below the flange, 7.7 mm off its
+axis, and the gap between them goes from 42 mm (open) to 17 mm (closed). The measured
+gap table is in `pick_place.py`; the gripper is closed to the cube width plus 0.6 mm,
+so the pads stop at the cube's faces instead of sinking into them.
 
 ### 3. Grasping (`src/gripper_attach_plugin.cpp`)
 
-The gripper's collision shapes in the upstream model are tiny cylinders, so a pure
-friction grasp slips in Gazebo. As most Gazebo pick-and-place demos do, the cube is
-welded to the gripper with a fixed joint once the fingers have closed, and released
-at the pad. The plugin listens on `/vision_pick/attach` (model name = attach,
+The upstream model only has tiny collision cylinders at the finger pivots, so the
+pads would pass straight through a cube. This package adds a collision box to each
+pad (Gazebo copy of the model only, see the xacro). When the gripper closes, the pads
+physically push the cube to the centre and square it up, like a real parallel gripper.
+
+Holding the cube by friction alone is unreliable in Gazebo, so, as most Gazebo
+pick-and-place demos do, the cube is then welded to the gripper with a fixed joint and
+released at the pad. The plugin listens on `/vision_pick/attach` (model name = attach,
 empty string = detach).
 
 ![grasp](docs/grasp_side_view.png)
@@ -115,6 +121,7 @@ empty string = detach).
 | Detection error, position | ≤ 3 mm (vs. Gazebo ground truth) |
 | Detection error, yaw | ≤ 6° |
 | Placement error on the pad | ≤ 3 mm |
+| Pad-to-cube gap when grasped | pads touch, 0.0 mm penetration; cube squared up to the pads within 0.01° |
 | Cubes sorted | 3 of 3, repeatable over consecutive runs |
 
 ## Tuning
@@ -123,8 +130,9 @@ Parameters of `pick_place.py` (private ROS params):
 
 | Parameter | Default | Meaning |
 |---|---|---|
-| `tcp_offset` | `[0, 0.008, 0.102]` | Grasp point (centre of the closed finger pads) in the `joint6_flange` frame (m) |
-| `gripper_open` / `gripper_closed` | `0.1` / `-0.45` | `gripper_controller` joint values (rad) |
+| `tcp_offset` | `[-0.0007, 0.0077, 0.101]` | Grasp point (centre of the closed finger pads) in the `joint6_flange` frame (m) |
+| `gripper_open` | `0.1` | `gripper_controller` joint value when open (rad) |
+| `grasp_clearance` | `0.0006` | Extra pad opening on top of the cube width when grasping (m) |
 | `approach_height` | `0.06` | Height above the cube for approach/retreat (m) |
 | `place_clearance` | `0.0005` | Gap left under the cube when it is released (m). The cube is set down before the weld is released, so it does not drop |
 | `pads` | red `[0, 0.2]`, green `[0, -0.2]`, blue `[0.1, -0.2]` | Drop-off positions (m) |

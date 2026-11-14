@@ -35,7 +35,7 @@
         <material><ambient>0.8 0.8 1 1</ambient><diffuse>0.8 0.8 1 1</diffuse></material></visual></link>
     </model>
 
-    <!-- 3 cm cubes (the gripper's pads close to ~29 mm, so smaller cubes cannot be pinched), placed with arbitrary yaw: the detector has to recover position AND yaw -->
+    <!-- 3 cm cubes, placed with arbitrary yaw: the detector has to recover position AND yaw -->
     <model name="cube_red">
       <pose>0.17 0.07 0.015 0 0 0.35</pose>
       <link name="link">
